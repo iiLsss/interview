@@ -1,10 +1,12 @@
 # 面试题系列之promise
 
-1.描述promise
-2.promise常用api
-3.promise.all、promise.race的作用及实现原理
-4.promise如何实现中断
-5.promise常见代码输出题
+1. 描述promise
+2. promise常用api
+3. promise.all、promise.race的作用及实现原理
+4. promise如何实现中断
+5. promise常见代码输出题
+
+[讲解视频地址](https://www.bilibili.com/video/BV1yB4y1h7gD?share_source=copy_web)
 
 ## 相关文档
 

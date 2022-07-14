@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    const ws = new WeakSet()
+    let obj = {a: 1}
+    ws.add(obj)
+    console.log(ws)
+    console.log(ws.has(obj))
+    setTimeout(() => {
+      obj = null
+    }, 100);
+
+    const wm = new WeakMap()
+    let arr = [1,2,3]
+    wm.set(arr, 'diqiu')
+    console.log(wm)
+     setTimeout(() => {
+      arr = null
+    }, 100);
+  </script>
+</body>
+</html>

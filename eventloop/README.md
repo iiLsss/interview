@@ -1,5 +1,7 @@
 # 面试题系列之事件循环(EventLoop)
 
+[讲解视频地址](https://www.bilibili.com/video/BV19S4y177R4/)
+
 ## 面试题
 
 1. 描述事件循环，宏任务、微任务分别是什么？

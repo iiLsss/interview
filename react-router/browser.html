@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>browser</title>
+</head>
+<body>
+  <div onclick="a()">push -> /a</div>
+  <div onclick="b()">push ->  /b</div>
+  <div onclick="go()">go  -1 </div>
+  <div onclick="replace()">replace ->  /c</div>
+  <hr>
+  跳转页面=>
+  <div id="text"></div>
+  <script>
+
+    const history = window.history
+    let oldHistory = history.pushState
+
+    history.pushState = (data, unused, url) =>{
+      alert(url)
+      oldHistory.apply(history, [data, unused, url])
+
+      TextDOM.innerHTML = window.location.pathname
+    }
+
+
+    const TextDOM = document.querySelector('#text')
+    function a() {
+      history.pushState('a', null, '/a')
+    }
+
+    function b() {
+      history.pushState('b', null, '/b')
+    }
+
+    function replace() {
+      history.replaceState('c', null, '/c')
+    }
+
+
+    function go() {
+      history.go(-1)
+    }
+    
+    window.onpopstate = (e) => {
+      console.log('浏览器回退');
+      TextDOM.innerHTML = window.location.pathname
+    }
+
+  </script>
+</body>
+</html>

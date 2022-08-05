@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>hash路由</title>
+</head>
+<body>
+  <a href="#/a">跳转a</a>
+  <a href="#/b">跳转b</a>
+  <hr>
+  跳转页面=>
+  <div id="text"></div>
+
+  <script>
+    const TextDOM = document.querySelector('#text')
+
+    window.addEventListener('hashchange', () => {
+      const hash = window.location.hash.slice(1)
+      TextDOM.innerHTML = hash
+    })
+
+  </script>
+</body>
+</html>

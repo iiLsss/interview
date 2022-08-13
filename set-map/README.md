@@ -129,9 +129,13 @@ console.log(map.keys()) // [Map Iterator] { 'a', [ 1, 2, 3 ], { name: 'duqiu' } 
 console.log(map.values()) // [Map Iterator] { 1, 1, 1 }
 // 所有成员的遍历器 使用for of 等同于 entries()
 console.log(map.entries()) // [Map Entries] {[ 'a', 1 ],[ [ 1, 2, 3 ], 1 ],[ { name: 'duqiu' }, 1 ]}
-
 ```
 
+**应用场景**
+
+
+LeetCode 1282. 用户分组 [利用map进行结题](https://leetcode.cn/problems/group-the-people-given-the-group-size-they-belong-to/solution/js-ha-by-friendly-visvesvarayaics-ut9b/
+)
 
 
 ### WeakMap&WeakSet

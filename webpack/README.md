@@ -15,15 +15,14 @@
 
 **原理（构建流程）**
 
-1. 读取配置文件和`shell`语句中的参数，进行合并。得到初始化参数。
-2. 开始初始化`Compiler`对象，调用配置项里面插件的`apply`方法，挂载监听。
-3. 根据`entry`配置的入口文件，调用配置项的`loader`对模块进行编译，并找出所依赖的模块，进行递归编译查找依赖。
-4. 经过`loader`编译后，得到编译后的内容以及依赖关系，组装成一个个包含多个模块的`chunk`，在把每个`chunk`转换成一个单独的文件加载到输出列表
-5. 根据配置确定输出的路径和文件名，把文件内容写入到文件系统
+1. **初始化参数**：读取配置文件和`shell`语句中的参数，进行合并。得到初始化参数。
+2. **开始编译**： 开始初始化`Compiler`对象，调用配置项里面插件的`apply`方法，挂载监听。根据`entry`配置的入口文件。
+3. **编译模块**：调用配置项的`loader`对模块进行编译，并找出所依赖的模块，进行递归编译查找依赖。
+4. **完成编译**：经过`loader`编译后，得到编译后的内容以及依赖关系，组装成一个个包含多个模块的`chunk`，在把每个`chunk`转换成一个单独的文件加载到输出列表
+5. **输出资源**：根据配置确定输出的路径和文件名，把文件内容写入到文件系统
 
-> 以上就是 webpack 基本原理（构建流程）。
 
-![](./static/flow.png)
+![a](./static/flow.png)
 
 ## loader 加载器
 
@@ -36,11 +35,11 @@
 ```js
 // babel-loader
 function loader(source) {
-	// 先对源代码转换成抽象语法树 babylon
-	// 对抽象语法树进行转换得到新AST traverse
-	// 新的AST转换语法树 preset-env
-	let code = transform(source);
-	return code;
+  // 先对源代码转换成抽象语法树 babylon
+  // 对抽象语法树进行转换得到新AST traverse
+  // 新的AST转换语法树 preset-env
+  let code = transform(source);
+  return code;
 }
 module.exports = loader;
 ```
@@ -94,7 +93,7 @@ class Plugin {
 https://zhuanlan.zhihu.com/p/30669007
 https://github.com/careteenL/webpack-hmr
 
-
+```
 webpack 可以将不同的模块打包成 bundle 文件或者几个 chunk 文件，但是当我通过 webpack HMR 进行开发的过程中，我并没有在我的 dist 目录中找到 webpack 打包好的文件，它们去哪呢？
 
 通过查看 webpack-dev-server 的 package.json 文件，我们知道其依赖于 webpack-dev-middleware 库，那么 webpack-dev-middleware 在 HMR 过程中扮演什么角色？
@@ -104,7 +103,7 @@ webpack 可以将不同的模块打包成 bundle 文件或者几个 chunk 文件
 浏览器拿到最新的模块代码，HMR 又是怎么将老的模块替换成新的模块，在替换的过程中怎样处理模块之间的依赖关系？
 
 当模块的热替换过程中，如果替换模块失败，有什么回退机制吗？
-
+```
 1. webpack监听文件变化，从新进行编译打包，存在内存当中
 2. 通过webpack-dev-server和webpack之间的接口交互
 
@@ -115,13 +114,13 @@ webpack 可以将不同的模块打包成 bundle 文件或者几个 chunk 文件
 
 #### 1.1 代码压缩
  
-1. js压缩  terser-webpack-plugin
-2. css提取压缩 
+  - js压缩`terser-webpack-plugin`
+  - css提取`mini-css-extract-plugin`压缩`optimize-css-assets-webpack-plugin`
 
 
 #### 1.2 代码分割 
 
-1. 入口文件分割
+##### 1.2.1 入口文件分割
 
 ```js
 {
@@ -132,11 +131,10 @@ webpack 可以将不同的模块打包成 bundle 文件或者几个 chunk 文件
 }
 ```
 
-2. 动态导入和懒加载
+##### 1.2.2 动态导入和懒加载
 
 动态导入：业务组件内根据逻辑去加载模块
 
-**index.js**
 ```js
 // click...
 // if ...
@@ -165,14 +163,15 @@ export default routes
 ```
 
 
-3. 代码分割
+##### 1.2.3  代码分割
 
 作用：提取公共代码为单独文件进行加载，减少加载成本，提升用户体验
+
 实现：将 [optimization.runtimeChunk](https://webpack.js.org/configuration/optimization/#optimizationruntimechunk) 设置为 `true` 或 `multiple` 会向每个入口点添加一个仅包含运行时的附加块。
 
-#### 1.3 Scope Hoisting
+#### 1.3 Scope Hoisting 作用域提升
 
-**作用域提升**，将分散的模块划分到同一个作用域中，避免了代码的重复引入，有效减少打包后的代码体积和运行时的内存损耗
+作用：作用域提升，将分散的模块划分到同一个作用域中，避免了代码的重复引入，有效减少打包后的代码体积和运行时的内存损耗
 
 #### 1.4 Tree-shaking
 
@@ -181,38 +180,58 @@ export default routes
 
 开启：webpack默认支持，在`.babelrc`里设置`module:false`即可在`production mode`下默认开启
 
+#### 1.5 静态资源访问CDN
+
+作用：内容分发网络，用户在访问时可以就近原则（服务器）获取资源。
+
+实现：设置`publicPath`为资源目录地址
+
+相关设置：
+  - 预解析`<link rel="dns-prefetch" href="cnd.com">` 
+  - 文件指纹
+    - hash 编译之后都会生成新的hash
+    - chunkhash 根据不同入口文件(Entry)进行依赖文件解析、构建对应的chunk，生成对应的哈希值。
+    - contenthash 根据文件内容是否改变生成hash
+    - 
+
+```js
+// wepback.config.js
+{
+  output: {
+    filename: '[name].[hash].js'
+  }
+}
+```
+
+
 ### 2. 编译性能优化
 
-**2.1 费时分析**
+#### 2.1 费时分析
 
-使用[speed-measure-webpack-plugin](https://github.com/stephencookdev/speed-measure-webpack-plugin)插件查看编译过程时长
+- [speed-measure-webpack-plugin](https://github.com/stephencookdev/speed-measure-webpack-plugin)使用该插件查看编译过程时长
 
 
-**2.2 缩小查找文件范围**
+#### 2.2 缩小查找文件范围
 
-**resolve.extensions**: 指定`extension`之后可以不用在`require`或是`import`的时候加文件扩展名,会依次尝试添加扩展名进行匹配
-
-**resolve.alias**: 配置别名可以加快`webpack`查找模块的速度
-
-**resolve.modules**: 对于直接声明依赖名的模块（如`react`），`webpack` 会类似`Node.js`一样进行路径搜索，搜索`node_modules`目录
-
-**module.noParse**：用于配置哪些模块文件的内容不需要进行解析
-
-**IgnorePlugin**：用于忽略某些特定的模块，让`webpack`不把这些指定的模块打包进去
+- resolve.extensions: 指定`extension`之后可以不用在`require`或是`import`的时候加文件扩展名,会依次尝试添加扩展名进行匹配
+- resolve.alias: 配置别名可以加快`webpack`查找模块的速度
+- resolve.modules: 对于直接声明依赖名的模块（如`react`），`webpack` 会类似`Node.js`一样进行路径搜索，搜索`node_modules`目录
+- module.noParse：用于配置哪些模块文件的内容不需要进行解析
+- IgnorePlugin：用于忽略某些特定的模块，让`webpack`不把这些指定的模块打包进去
 
 
 
-**2.3 缓存配置**
+#### 2.3 缓存配置
 
-**babel-loader**: 开启缓存`options.cacheDirectory: true`
-**cache-loader**: 在一些性能开销较大的 `loader` 之前添加此 `loader`,以将结果缓存到磁盘里, 存和读取这些缓存文件会有一些时间开销,所以请只对性能开销较大的 `loader` 使用此 `loader`
-**hard-source-webpack-plugin**: 为模块提供了中间缓存,缓存默认的存放路径是`node_modules/.cache/hard-source`
+- babel-loader: 开启缓存`options.cacheDirectory: true`
+- cache-loader: 在一些性能开销较大的 `loader` 之前添加此 `loader`,以将结果缓存到磁盘里, 存和读取这些缓存文件会有一些时间开销,所以请只对性能开销较大的 `loader` 使用此 `loader`
+- hard-source-webpack-plugin: 为模块提供了中间缓存,缓存默认的存放路径是`node_modules/.cache/hard-source`
 
-**2.4 多进程处理**
+#### 2.4 多进程处理
 
-1. [thread-loader](https://github.com/webpack-contrib/thread-loader)
+- [thread-loader](https://github.com/webpack-contrib/thread-loader)
 
-2. terser-webpack-plugin 开启 parallel 参数
+- terser-webpack-plugin 开启 parallel 参数
 
 ## webpack 缓存 hard-source-webpack-plugin 和 cache-loader 区别以及实现
 
